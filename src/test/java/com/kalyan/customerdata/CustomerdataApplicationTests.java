@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -21,7 +23,6 @@ class CustomerdataApplicationTests {
 	@Test
 	public void testSave(){
 		Customer customer = new Customer();
-		customer.setId(1);
 		customer.setName("test");
 		customer.setEmail("test@test.com");
 
@@ -30,20 +31,33 @@ class CustomerdataApplicationTests {
 
 	@Test
 	public void testFetch(){
-		Customer customer = customerRepository.findById(1).get();
-		assertEquals("test", customer.getName());
+		Optional<Customer> customerOptional = customerRepository.findById(1);
+		Customer customer=null;
+		if(customerOptional.isPresent()){
+			customer = customerOptional.get();
+			assertEquals("test", customer.getName());
+		}
+
 	}
 
 	@Test
 	public void testUpdate(){
-		Customer customer = customerRepository.findById(1).get();
-		customer.setEmail("testing@test.com");
-		customerRepository.save(customer);
+		Optional<Customer> customerOptional = customerRepository.findById(1);
+		Customer customer=null;
+		if(customerOptional.isPresent()){
+			customer = customerOptional.get();
+			customer.setEmail("testing@test.com");
+			customerRepository.save(customer);
+		}
+
 	}
 
 	@Test
 	public void testDelete(){
-		customerRepository.deleteById(1);
+		if(customerRepository.existsById(1)){
+			customerRepository.deleteById(1);
+		}
+
 	}
 
 }
